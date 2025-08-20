@@ -1,0 +1,24 @@
+# Case Reports Figure Analysis Pipeline
+# Python dependencies
+
+# Core dependencies
+requests>=2.28.0
+beautifulsoup4>=4.11.0
+lxml>=4.9.0
+pandas>=1.5.0
+
+# OpenAI for MCQ generation
+openai>=1.0.0
+
+# Optional: for better XML parsing
+xmltodict>=0.13.0
+
+# Development and testing (optional)
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=22.0.0
+flake8>=5.0.0
+
+# Documentation (optional)
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.2.0
