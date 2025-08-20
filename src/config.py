@@ -20,7 +20,7 @@ class Config:
     enable_mcq: bool = True
     
     # Processing configuration
-    max_papers: int = 20
+    max_papers: int = 20000
     delay_between_requests: float = 1.0
     
     # MCQ generation settings

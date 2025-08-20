@@ -87,6 +87,9 @@ class MCQGenerator:
     def _create_mcq_prompt(self, abstract: str, caption: str, title: str) -> str:
         """Create the MCQ generation prompt"""
         
+        # Randomly select which option should be correct
+        correct_answer = random.choice(['A', 'B', 'C', 'D', 'E'])
+        
         return f"""
 You are a medical education expert creating USMLE-style MCQs. Using the abstract and figure caption below, write ONE imaging-centered MCQ.
 
@@ -101,7 +104,7 @@ You are a medical education expert creating USMLE-style MCQs. Using the abstract
 2. Use details from the caption (modality, key visual features). Do NOT invent unsupported details.
 3. Keep it clinically relevant (diagnosis, hallmark sign, staging, complication, next step based on visual finding).
 4. Provide exactly 5 options (A–E) with ONE best answer.
-5. **CRITICAL**: Randomize correct answer position across A-E. Do NOT default to A.
+5. **CRITICAL**: Make option {correct_answer} the correct answer. Place the best/most accurate response in option {correct_answer}.
 6. Add medical hashtags for searchability (max 10, comma-separated, no # symbols).
 7. Choose **subject** from USMLE categories:
    - Step 1: Anatomy, Physiology, Biochemistry, Pharmacology, Microbiology & Immunology, Pathology, Behavioral Science & Biostatistics, Genetics
@@ -117,7 +120,7 @@ You are a medical education expert creating USMLE-style MCQs. Using the abstract
   "option_c": "Option C",
   "option_d": "Option D",
   "option_e": "Option E",
-  "answer": "C",
+  "answer": "{correct_answer}",
   "commentary": "Summary of key finding and explanation of correct answer",
   "hashtags": "imaging modality, anatomy, pathology, findings",
   "subject": "Radiology",
@@ -144,9 +147,6 @@ You are a medical education expert creating USMLE-style MCQs. Using the abstract
         
         # Enhance based on caption content
         mcq = self._enhance_based_on_content(mcq, caption)
-        
-        # Randomize if answer is always A (bias correction)
-        mcq = self._randomize_if_biased(mcq)
         
         return mcq
     
@@ -183,33 +183,7 @@ You are a medical education expert creating USMLE-style MCQs. Using the abstract
         
         return mcq
     
-    def _randomize_if_biased(self, mcq: Dict[str, Any]) -> Dict[str, Any]:
-        """Randomize options if there's answer bias"""
-        
-        # Only randomize if answer is A (common bias)
-        if mcq.get('answer') == 'A' and random.random() < 0.7:  # 70% chance to randomize
-            options = [
-                mcq.get('option_a', ''),
-                mcq.get('option_b', ''),
-                mcq.get('option_c', ''),
-                mcq.get('option_d', ''),
-                mcq.get('option_e', '')
-            ]
-            
-            # Shuffle options
-            random.shuffle(options)
-            
-            # Update MCQ with shuffled options
-            mcq['option_a'] = options[0]
-            mcq['option_b'] = options[1]
-            mcq['option_c'] = options[2]
-            mcq['option_d'] = options[3]
-            mcq['option_e'] = options[4]
-            
-            # Update correct answer (first option after shuffle)
-            mcq['answer'] = 'A'
-        
-        return mcq
+
     
     def _extract_medical_tags(self, caption: str) -> str:
         """Extract medical tags using regex patterns"""
